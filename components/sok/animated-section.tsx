@@ -1,5 +1,6 @@
 'use client'
 
+import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -12,7 +13,7 @@ interface Props {
   duration?: number
   threshold?: number
   className?: string
-  as?: keyof JSX.IntrinsicElements
+  as?: keyof React.JSX.IntrinsicElements
   once?: boolean
 }
 

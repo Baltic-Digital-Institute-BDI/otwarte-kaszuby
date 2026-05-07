@@ -47,3 +47,5 @@ tw3_*.log
 dev_*.log
 dev3001_*.log
 install_*.log
+
+.vercel

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="60" viewBox="0 0 240 60" fill="none">
+  <circle cx="30" cy="30" r="26" stroke="#c84e00" stroke-width="3" fill="none" />
+  <path d="M18 30 L26 38 L42 22" stroke="#b8860b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <text x="68" y="28" font-family="Georgia, serif" font-size="20" font-weight="700" fill="#0d0d0d">Otwarte</text>
+  <text x="68" y="50" font-family="Georgia, serif" font-size="20" font-weight="700" fill="#c84e00">Kaszuby</text>
+</svg>

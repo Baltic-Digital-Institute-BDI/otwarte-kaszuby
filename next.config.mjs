@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  basePath: '/otwartekaszuby',
+  assetPrefix: '/otwartekaszuby',
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [

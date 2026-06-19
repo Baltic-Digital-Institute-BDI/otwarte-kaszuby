@@ -1,6 +1,6 @@
 import 'server-only'
 
-const STORYBLOK_API = 'https://api-eu.storyblok.com/v2/cdn'
+const STORYBLOK_API = process.env.STORYBLOK_API_BASE || 'https://api.storyblok.com/v2/cdn'
 const TOKEN = process.env.STORYBLOK_PREVIEW_TOKEN || 'Qzzxcq9oXwCmyGLwtPjHdwtt'
 
 export type Story<T = unknown> = {

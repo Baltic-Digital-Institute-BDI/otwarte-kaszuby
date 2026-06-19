@@ -470,7 +470,20 @@ export async function BlockRenderer({ block }: { block: AnyBlok | any }) {
   }
 }
 
+/** Wraps a block element with data-blok-c / data-blok-uid attrs so Visual Editor sees it */
+function editableWrap(blok: any) {
+  if (!blok?._uid) return {}
+  return {
+    'data-blok-c': JSON.stringify({ name: blok.component, space: '293294109226994', uid: blok._uid, id: blok._uid }),
+    'data-blok-uid': `293294109226994-${blok._uid}`,
+  } as any
+}
+
 export async function BlocksRenderer({ blocks }: { blocks: AnyBlok[] | undefined }) {
   if (!blocks?.length) return null
-  return <>{blocks.map((b: any) => <BlockRenderer key={b._uid} block={b} />)}</>
+  return <>{blocks.map((b: any) => (
+    <div key={b._uid} {...editableWrap(b)}>
+      <BlockRenderer block={b} />
+    </div>
+  ))}</>
 }

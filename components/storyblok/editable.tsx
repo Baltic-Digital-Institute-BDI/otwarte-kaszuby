@@ -1,11 +1,12 @@
 'use client'
 
+import type React from 'react'
 import { storyblokEditable } from '@storyblok/react'
 
 interface EditableProps {
   blok: any
   children: React.ReactNode
-  as?: keyof JSX.IntrinsicElements
+  as?: keyof React.JSX.IntrinsicElements
   className?: string
   style?: React.CSSProperties
 }

@@ -8,6 +8,8 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'cdn.sanity.io' },
       { protocol: 'https', hostname: 'otwartekaszuby.pl' },
+      { protocol: 'https', hostname: 'a.storyblok.com' },
+      { protocol: 'https', hostname: 'img.storyblok.com' },
     ],
   },
   async redirects() {

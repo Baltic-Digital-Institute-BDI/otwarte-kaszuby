@@ -1,11 +1,23 @@
 import type { MetadataRoute } from 'next'
 import { SITE } from '@/lib/constants'
-import { PROJEKTY } from '@/lib/data/projekty'
-import { AKTUALNOSCI } from '@/lib/data/aktualnosci'
+import { getStories } from '@/lib/storyblok/client'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date().toISOString()
   const staticRoutes = ['', '/o-nas', '/projekty', '/aktualnosci', '/wesprzyj', '/kontakt']
+
+  let projekty: { full_slug: string; published_at: string | null }[] = []
+  let news: { full_slug: string; published_at: string | null }[] = []
+  try {
+    const r1 = await getStories({ startsWith: 'projekty/', contentType: 'projekt', perPage: 100 })
+    projekty = r1.stories
+    const r2 = await getStories({ startsWith: 'aktualnosci/', contentType: 'aktualnosc', perPage: 100 })
+    news = r2.stories
+  } catch (e) {
+    console.warn('sitemap · Storyblok fetch failed, static-only:', e)
+  }
 
   return [
     ...staticRoutes.map((route) => ({
@@ -14,15 +26,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly' as const,
       priority: route === '' ? 1.0 : 0.8,
     })),
-    ...PROJEKTY.map((p) => ({
-      url: `${SITE.url}/projekty/${p.slug}`,
-      lastModified: now,
+    ...projekty.map((p) => ({
+      url: `${SITE.url}/${p.full_slug}`,
+      lastModified: p.published_at || now,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     })),
-    ...AKTUALNOSCI.map((n) => ({
-      url: `${SITE.url}/aktualnosci/${n.slug}`,
-      lastModified: n.date,
+    ...news.map((n) => ({
+      url: `${SITE.url}/${n.full_slug}`,
+      lastModified: n.published_at || now,
       changeFrequency: 'yearly' as const,
       priority: 0.6,
     })),

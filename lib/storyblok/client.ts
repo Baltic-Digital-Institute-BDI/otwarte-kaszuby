@@ -1,7 +1,17 @@
 import 'server-only'
+import { draftMode } from 'next/headers'
 
 const STORYBLOK_API = process.env.STORYBLOK_API_BASE || 'https://api.storyblok.com/v2/cdn'
 const TOKEN = process.env.STORYBLOK_PREVIEW_TOKEN || 'Qzzxcq9oXwCmyGLwtPjHdwtt'
+
+async function isDraftMode(): Promise<boolean> {
+  try {
+    const dm = await draftMode()
+    return dm.isEnabled
+  } catch {
+    return false
+  }
+}
 
 export type Story<T = unknown> = {
   id: number
@@ -29,9 +39,11 @@ const isDev = process.env.NODE_ENV === 'development'
 
 /** Fetch single story */
 export async function getStory<T = unknown>(slug: string, opts: FetchOptions = {}): Promise<Story<T> | null> {
+  const isDraft = await isDraftMode()
   const params = new URLSearchParams({
     token: TOKEN,
-    version: opts.version || (isDev ? 'draft' : 'published'),
+    version: opts.version || (isDraft || isDev ? 'draft' : 'published'),
+    cv: String(Date.now()),
   })
   if (opts.resolveLinks) params.set('resolve_links', opts.resolveLinks)
   if (opts.resolveRelations) params.set('resolve_relations', opts.resolveRelations)
@@ -39,7 +51,8 @@ export async function getStory<T = unknown>(slug: string, opts: FetchOptions = {
 
   const url = `${STORYBLOK_API}/stories/${slug}?${params}`
   const res = await fetch(url, {
-    next: { revalidate: isDev ? 0 : 60, tags: ['storyblok', `story:${slug}`] },
+    next: { revalidate: isDraft || isDev ? 0 : 60, tags: ['storyblok', `story:${slug}`] },
+    cache: isDraft ? 'no-store' : 'default',
   })
   if (!res.ok) {
     if (res.status === 404) return null

@@ -4,6 +4,7 @@ import { SITE, SOK, FEATURES } from '@/lib/constants'
 import { ngoSchema } from '@/lib/seo/schema'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
+import { StoryblokProvider } from '@/components/storyblok/storyblok-provider'
 import './globals.css'
 
 const sourceSerif = Source_Serif_4({
@@ -59,9 +60,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <a href="#main" className="skip-link">Pomiń do treści</a>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ngoSchema()) }} />
-        <Header />
-        <main id="main">{children}</main>
-        <Footer />
+        <StoryblokProvider>
+          <Header />
+          <main id="main">{children}</main>
+          <Footer />
+        </StoryblokProvider>
         {FEATURES.analytics && process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
           <script
             defer

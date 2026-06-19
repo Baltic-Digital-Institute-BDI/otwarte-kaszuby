@@ -72,7 +72,9 @@ export async function getStories<T = unknown>(opts: FetchOptions & {
   if (opts.resolveRelations) params.set('resolve_relations', opts.resolveRelations)
   if (opts.filterQuery) {
     for (const [k, v] of Object.entries(opts.filterQuery)) {
-      params.set(`filter_query[${k}][in]`, String(v))
+      // Strip 'content.' prefix — Storyblok CDN expects field name only
+      const field = k.replace(/^content\./, '')
+      params.set(`filter_query[${field}][in]`, String(v))
     }
   }
 

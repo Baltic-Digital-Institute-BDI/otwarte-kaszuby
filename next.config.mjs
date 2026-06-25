@@ -14,6 +14,7 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      { source: '/home', destination: '/', permanent: false },
       { source: '/category/projekty/:path*', destination: '/projekty', permanent: true },
       { source: '/category/wiadomosci/:path*', destination: '/aktualnosci', permanent: true },
       { source: '/category/bez-kategorii-pl/:path*', destination: '/aktualnosci', permanent: true },

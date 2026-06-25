@@ -32,7 +32,9 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: [
-          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          // X-Frame-Options REMOVED · superseded by CSP frame-ancestors below
+          // (X-Frame-Options doesn't support multi-origin allowlist)
+          { key: 'Content-Security-Policy', value: "frame-ancestors 'self' https://app.storyblok.com https://*.storyblok.com" },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },

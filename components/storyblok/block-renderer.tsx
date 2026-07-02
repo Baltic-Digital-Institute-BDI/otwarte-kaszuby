@@ -190,6 +190,13 @@ function ValuesChipsBlock({ b }: { b: any }) {
 }
 
 function BentoGalleryBlock({ b }: { b: any }) {
+  // Support both new asset shape (b.obraz_glowny.filename) and legacy text URL (b.obraz_glowny_url)
+  const img1 = assetUrl(b.obraz_glowny, 1600) || b.obraz_glowny_url
+  const img2 = assetUrl(b.obraz_2, 800) || b.obraz_2_url
+  const img3 = assetUrl(b.obraz_3, 800) || b.obraz_3_url
+  const alt1 = b.obraz_glowny?.alt || b.obraz_glowny_alt || ''
+  const alt2 = b.obraz_2?.alt || b.obraz_2_alt || ''
+  const alt3 = b.obraz_3?.alt || b.obraz_3_alt || ''
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
       <AnimatedSection animation="fade-up">
@@ -197,10 +204,10 @@ function BentoGalleryBlock({ b }: { b: any }) {
         {b.opis && <p className="text-[var(--color-ok-text-secondary)] mb-10 max-w-2xl">{b.opis}</p>}
       </AnimatedSection>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-        {b.obraz_glowny_url && (
+        {img1 && (
           <AnimatedSection animation="fade-up" delay={0} className="md:col-span-2 md:row-span-2">
             <div className="relative aspect-[4/3] md:aspect-auto md:h-full rounded-2xl overflow-hidden group">
-              <Image src={b.obraz_glowny_url} alt={b.obraz_glowny_alt || ''} fill sizes="(max-width: 768px) 100vw, 66vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              <Image src={img1} alt={alt1} fill sizes="(max-width: 768px) 100vw, 66vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                 {b.obraz_glowny_kategoria && <p className="text-sm font-mono uppercase tracking-wider opacity-90 mb-1">{b.obraz_glowny_kategoria}</p>}
@@ -209,10 +216,10 @@ function BentoGalleryBlock({ b }: { b: any }) {
             </div>
           </AnimatedSection>
         )}
-        {b.obraz_2_url && (
+        {img2 && (
           <AnimatedSection animation="fade-up" delay={150}>
             <div className="relative aspect-square rounded-2xl overflow-hidden group">
-              <Image src={b.obraz_2_url} alt={b.obraz_2_alt || ''} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              <Image src={img2} alt={alt2} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                 {b.obraz_2_tytul && <p className="font-headline text-base font-semibold">{b.obraz_2_tytul}</p>}
@@ -220,10 +227,10 @@ function BentoGalleryBlock({ b }: { b: any }) {
             </div>
           </AnimatedSection>
         )}
-        {b.obraz_3_url && (
+        {img3 && (
           <AnimatedSection animation="fade-up" delay={300}>
             <div className="relative aspect-square rounded-2xl overflow-hidden group">
-              <Image src={b.obraz_3_url} alt={b.obraz_3_alt || ''} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              <Image src={img3} alt={alt3} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                 {b.obraz_3_kategoria && <p className="font-mono text-xs uppercase tracking-wider opacity-90">{b.obraz_3_kategoria}</p>}

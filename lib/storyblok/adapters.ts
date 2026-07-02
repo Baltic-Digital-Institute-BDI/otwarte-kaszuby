@@ -7,8 +7,10 @@ const ASSET_BASE = 'https://a.storyblok.com'
 function assetUrl(asset?: StoryblokAsset | null): string | undefined {
   if (!asset?.filename) return undefined
   const f = asset.filename
+  // Protocol-relative URL → force https
+  if (f.startsWith('//')) return `https:${f}`
+  // Local public/ path
   if (f.startsWith('/') && !f.startsWith('//')) return f
-  if (f.startsWith(ASSET_BASE) || f.startsWith('//a.storyblok.com')) return f
   return f
 }
 

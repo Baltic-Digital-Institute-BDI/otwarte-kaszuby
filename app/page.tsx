@@ -1,7 +1,8 @@
-// Strona główna · render hardcoded version (full visual parity z backup)
-// Storyblok story 'home' jest dostępna do edycji przez Aleksandrę, ale frontend wyświetla
-// pełną wersję hardcoded żeby zagwarantować 1:1 wygląd. W przyszłości można aktywować
-// override przez Storyblok edytując sekcje story 'home' (wówczas Storyblok wins).
+// Strona główna · full render z Storyblok (edytowalna w Visual Editor przez Aleksandrę)
+// Fallback do hardcoded jeśli story nie istnieje lub brak sekcji (bezpiecznik)
+import { getStory } from '@/lib/storyblok/client'
+import type { StronaContent } from '@/lib/storyblok/types'
+import { BlocksRenderer } from '@/components/storyblok/block-renderer'
 import HomePageHardcoded from './_hardcoded'
 
 export const metadata = {
@@ -9,6 +10,9 @@ export const metadata = {
   description: 'Łączymy ludzi, kultury i społeczności na Kaszubach. Stowarzyszenie OPP działa od 2018 roku.',
 }
 
-export default function HomePage() {
-  return <HomePageHardcoded />
+export default async function HomePage() {
+  const story = await getStory<StronaContent>('home')
+  const sekcje = story?.content?.sekcje
+  if (!sekcje?.length) return <HomePageHardcoded />
+  return <BlocksRenderer blocks={sekcje} />
 }

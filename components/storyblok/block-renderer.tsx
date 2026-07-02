@@ -21,6 +21,8 @@ function assetUrl(asset?: StoryblokAsset | string | null, w = 1600): string {
   if (!asset) return ''
   const filename = typeof asset === 'string' ? asset : asset.filename
   if (!filename) return ''
+  // Local paths (Next.js public/) — return as-is, no image service transform
+  if (filename.startsWith('/') && !filename.startsWith('//')) return filename
   if (filename.includes('/m/')) return filename
   return `${filename}/m/${w}x0`
 }
@@ -438,6 +440,7 @@ function KontaktListaBlock({ b }: { b: any }) {
     if (id === 'mail') return <Mail className="size-5" />
     return null
   }
+  const mapsQuery = b.col2_maps_query ? encodeURIComponent(b.col2_maps_query) : null
   return (
     <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -452,7 +455,9 @@ function KontaktListaBlock({ b }: { b: any }) {
                 <div>
                   {it.etykieta && <p className="font-semibold mb-1">{it.etykieta}</p>}
                   {it.link_href ? (
-                    <a href={it.link_href} className="text-[var(--color-ok-primary)] hover:underline font-mono text-lg">{it.wartosc}</a>
+                    <a href={it.link_href} className={cn('text-[var(--color-ok-primary)] hover:underline', it.ikona === 'mail' ? 'break-all' : 'font-mono text-lg')}>
+                      {it.wartosc}
+                    </a>
                   ) : (
                     <p className="text-[var(--color-ok-text-secondary)] leading-relaxed">
                       {it.wartosc}
@@ -481,12 +486,26 @@ function KontaktListaBlock({ b }: { b: any }) {
             </>
           )}
         </div>
-        {b.col2_tytul && (
-          <div>
-            <h2 className="font-headline text-2xl font-bold mb-6">{b.col2_tytul}</h2>
-            <p className="text-sm text-[var(--color-ok-text-tertiary)]">(patrz sekcja "Dane rejestrowe" poniżej)</p>
-          </div>
-        )}
+        <div>
+          {b.col2_tytul && <h2 className="font-headline text-2xl font-bold mb-6">{b.col2_tytul}</h2>}
+          <dl className="space-y-3 mb-8">
+            {b.col2_krs && <div className="flex justify-between gap-4 py-2 border-b border-[var(--color-ok-border-default)]"><dt className="text-[var(--color-ok-text-secondary)]">KRS</dt><dd className="font-mono font-semibold">{b.col2_krs}</dd></div>}
+            {b.col2_nip && <div className="flex justify-between gap-4 py-2 border-b border-[var(--color-ok-border-default)]"><dt className="text-[var(--color-ok-text-secondary)]">NIP</dt><dd className="font-mono font-semibold">{b.col2_nip}</dd></div>}
+            {b.col2_regon && <div className="flex justify-between gap-4 py-2 border-b border-[var(--color-ok-border-default)]"><dt className="text-[var(--color-ok-text-secondary)]">REGON</dt><dd className="font-mono font-semibold">{b.col2_regon}</dd></div>}
+            {b.col2_forma_prawna && <div className="flex justify-between gap-4 py-2 border-b border-[var(--color-ok-border-default)]"><dt className="text-[var(--color-ok-text-secondary)]">Forma prawna</dt><dd className="text-right">{b.col2_forma_prawna}</dd></div>}
+            {b.col2_status_opp !== false && <div className="flex justify-between gap-4 py-2 border-b border-[var(--color-ok-border-default)]"><dt className="text-[var(--color-ok-text-secondary)]">Status</dt><dd className="text-right text-[var(--color-ok-success)] font-semibold">OPP</dd></div>}
+          </dl>
+          {mapsQuery && (
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-3 border-2 border-[var(--color-ok-primary)] text-[var(--color-ok-primary)] rounded-md font-medium hover:bg-[var(--color-ok-primary-50)] transition-colors"
+            >
+              <MapPin className="size-4" /> {b.col2_maps_label || 'Otwórz w Google Maps'}
+            </a>
+          )}
+        </div>
       </div>
     </section>
   )

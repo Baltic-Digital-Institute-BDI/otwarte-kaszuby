@@ -92,7 +92,8 @@ function ButtonBlock({ b }: { b: any }) {
 }
 
 function HeroBlock({ b }: { b: any }) {
-  const bg = assetUrl(b.tlo_zdjecie, 2000)
+  // Fallback do lokalnego obrazu jeśli Storyblok bg image nie ustawiony (1:1 z pre-storyblok backup)
+  const bg = assetUrl(b.tlo_zdjecie, 2000) || '/images/klodno-kaszuby.jpg'
   return (
     <section className="relative bg-[var(--color-ok-bg-secondary)] overflow-hidden">
       {bg && (

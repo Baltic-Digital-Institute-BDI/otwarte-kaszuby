@@ -128,12 +128,13 @@ function HeroBlock({ b }: { b: any }) {
   }
   // Big variant · full-width bg image + blobs + big H1 + CTAs (homepage)
   const bg = assetUrl(b.tlo_zdjecie, 2000) || '/images/klodno-kaszuby.jpg'
+  const bgAlt = b.tlo_alt || 'Krajobraz Kaszub'
   return (
     <section className="relative bg-[var(--color-ok-bg-secondary)] overflow-hidden">
       {bg && (
         <div className="absolute inset-0 z-0">
           <div className={cn('absolute inset-0', b.animacja !== false && 'animate-ken-burns')}>
-            <Image src={bg} alt="" fill sizes="100vw" className="object-cover opacity-30" priority />
+            <Image src={bg} alt={bgAlt} fill sizes="100vw" className="object-cover opacity-30" priority />
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-ok-bg-secondary)] via-[var(--color-ok-bg-secondary)]/80 to-transparent" />
         </div>
@@ -606,13 +607,16 @@ function StatsBlock({ b }: { b: any }) {
     suffix: s.suffix || '',
     label: s.etykieta || '',
   }))
+  const srHeading = b.tytul_sr_only || 'Nasze osiągnięcia'
   return (
-    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-      <AnimatedSection animation="fade-up">
-        {b.tytul && <h2 className="font-headline text-2xl md:text-3xl font-bold mb-8 text-center">{b.tytul}</h2>}
+    <AnimatedSection animation="fade-up">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16" aria-labelledby="stats-heading">
+        <h2 id="stats-heading" className={b.tytul ? 'font-headline text-2xl md:text-3xl font-bold mb-8 text-center' : 'sr-only'}>
+          {b.tytul || srHeading}
+        </h2>
         <StatsCounter stats={stats} />
-      </AnimatedSection>
-    </section>
+      </section>
+    </AnimatedSection>
   )
 }
 

@@ -1,8 +1,9 @@
-// Strona główna · full render z Storyblok (edytowalna w Visual Editor przez Aleksandrę)
-// Fallback do hardcoded jeśli story nie istnieje lub brak sekcji (bezpiecznik)
+// Strona główna · client-side rendering z Storyblok Bridge live preview
+// Server: prefetches story + dynamic content · passes to LivePreview client wrapper
 import { getStory } from '@/lib/storyblok/client'
 import type { StronaContent } from '@/lib/storyblok/types'
-import { BlocksRenderer } from '@/components/storyblok/block-renderer'
+import { prefetchDynamicStories } from '@/lib/storyblok/prefetch'
+import { LivePreview } from '@/components/storyblok/live-preview'
 import HomePageHardcoded from './_hardcoded'
 
 export const metadata = {
@@ -11,8 +12,10 @@ export const metadata = {
 }
 
 export default async function HomePage() {
-  const story = await getStory<StronaContent>('home')
-  const sekcje = story?.content?.sekcje
-  if (!sekcje?.length) return <HomePageHardcoded />
-  return <BlocksRenderer blocks={sekcje} />
+  const [story, dynamic] = await Promise.all([
+    getStory<StronaContent>('home'),
+    prefetchDynamicStories(),
+  ])
+  if (!story?.content?.sekcje?.length) return <HomePageHardcoded />
+  return <LivePreview initialStory={story as any} dynamic={dynamic} />
 }

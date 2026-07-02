@@ -5,7 +5,6 @@ import { ngoSchema } from '@/lib/seo/schema'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { StoryblokProvider } from '@/components/storyblok/storyblok-provider'
-import { BridgeLoader } from '@/components/storyblok/bridge-loader'
 import './globals.css'
 
 const sourceSerif = Source_Serif_4({
@@ -66,7 +65,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main id="main">{children}</main>
           <Footer />
         </StoryblokProvider>
-        <BridgeLoader />
         {FEATURES.analytics && process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
           <script
             defer

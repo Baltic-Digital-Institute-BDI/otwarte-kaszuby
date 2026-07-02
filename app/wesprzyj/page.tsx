@@ -1,7 +1,7 @@
-// /wesprzyj · full render z Storyblok (edytowalna przez Aleksandrę w Visual Editor)
 import { getStory } from '@/lib/storyblok/client'
 import type { StronaContent } from '@/lib/storyblok/types'
-import { BlocksRenderer } from '@/components/storyblok/block-renderer'
+import { prefetchDynamicStories } from '@/lib/storyblok/prefetch'
+import { LivePreview } from '@/components/storyblok/live-preview'
 import { donateActionSchema } from '@/lib/seo/schema'
 import WesprzyjHardcoded from './_hardcoded'
 
@@ -11,12 +11,16 @@ export const metadata = {
 }
 
 export default async function WesprzyjPage() {
-  const story = await getStory<StronaContent>('wesprzyj')
-  const sekcje = story?.content?.sekcje
+  const [story, dynamic] = await Promise.all([
+    getStory<StronaContent>('wesprzyj'),
+    prefetchDynamicStories(),
+  ])
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(donateActionSchema()) }} />
-      {sekcje?.length ? <BlocksRenderer blocks={sekcje} /> : <WesprzyjHardcoded />}
+      {story?.content?.sekcje?.length
+        ? <LivePreview initialStory={story as any} dynamic={dynamic} />
+        : <WesprzyjHardcoded />}
     </>
   )
 }

@@ -5,40 +5,62 @@ import { useRouter } from 'next/navigation'
 import Script from 'next/script'
 
 /**
- * Storyblok Bridge · live preview loader (client-side)
- * - Loads storyblok-v2-latest.js from app.storyblok.com
- * - Subscribes to 'input' + 'change' + 'published' events
- * - Calls router.refresh() to re-fetch server components with updated draft content
- * - Enables click-to-edit highlights on elements with data-blok-c attribute
+ * Storyblok Bridge · Visual Editor live preview + click-to-edit
  *
- * Note: window.StoryblokBridge is declared by @storyblok/react — accessed via cast.
+ * Script auto-detects iframe embedding (window.top !== window). Outside admin
+ * iframe context, script is no-op — safe to load on production for everyone.
+ *
+ * Inside iframe context:
+ *  - Bridge attaches click handlers to elements with data-blok-c attribute
+ *  - On block click → postMessage to parent Storyblok admin → opens block editor panel
+ *  - On admin content change (publish, save draft) → we call router.refresh() to re-fetch server components
  */
 export function BridgeLoader() {
   const router = useRouter()
 
   useEffect(() => {
-    const w = window as unknown as { StoryblokBridge?: new () => { on: (events: string | string[], cb: (event?: unknown) => void) => void } }
+    // Skip if not in iframe
+    if (typeof window === 'undefined') return
+    if (window.top === window.self) return // not embedded, skip bridge init
+
+    const w = window as unknown as {
+      StoryblokBridge?: new () => {
+        on: (events: string | string[], cb: (event?: unknown) => void) => void
+      }
+    }
 
     const initBridge = () => {
       if (!w.StoryblokBridge) return
       const bridge = new w.StoryblokBridge()
-      bridge.on(['input', 'change', 'published'], () => {
+      // Only refresh on save/publish events (not per-keystroke 'input')
+      bridge.on(['change', 'published'], () => {
         router.refresh()
       })
-      bridge.on('enterEditmode', () => router.refresh())
+      // Also handle 'input' for live preview but with delay
+      let inputTimer: ReturnType<typeof setTimeout> | null = null
+      bridge.on(['input'], () => {
+        if (inputTimer) clearTimeout(inputTimer)
+        inputTimer = setTimeout(() => router.refresh(), 500)
+      })
     }
 
     if (w.StoryblokBridge) {
       initBridge()
-    } else {
-      const check = setInterval(() => {
-        if (w.StoryblokBridge) {
-          clearInterval(check)
-          initBridge()
-        }
-      }, 200)
-      return () => clearInterval(check)
+      return
     }
+
+    // Poll for Bridge script load (max 10s)
+    const startedAt = Date.now()
+    const check = setInterval(() => {
+      if (w.StoryblokBridge) {
+        clearInterval(check)
+        initBridge()
+      } else if (Date.now() - startedAt > 10000) {
+        clearInterval(check)
+      }
+    }, 200)
+
+    return () => clearInterval(check)
   }, [router])
 
   return (

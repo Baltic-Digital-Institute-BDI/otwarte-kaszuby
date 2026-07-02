@@ -890,19 +890,27 @@ export async function BlockRenderer({ block }: { block: AnyBlok | any }) {
   }
 }
 
-/** Wraps a block element with data-blok-c / data-blok-uid attrs so Visual Editor sees it */
+/** Wraps a block element with data-blok-c / data-blok-uid attrs so Visual Editor sees it
+ * Uses official @storyblok/react storyblokEditable format
+ */
 function editableWrap(blok: any) {
   if (!blok?._uid) return {}
+  const editable = {
+    name: blok.component,
+    space: '293294109226994',
+    uid: blok._uid,
+    id: blok._uid,
+  }
   return {
-    'data-blok-c': JSON.stringify({ name: blok.component, space: '293294109226994', uid: blok._uid, id: blok._uid }),
+    'data-blok-c': JSON.stringify(editable),
     'data-blok-uid': `293294109226994-${blok._uid}`,
-  } as any
+  } as Record<string, string>
 }
 
 export async function BlocksRenderer({ blocks }: { blocks: AnyBlok[] | undefined }) {
   if (!blocks?.length) return null
   return <>{blocks.map((b: any) => (
-    <div key={b._uid} {...editableWrap(b)}>
+    <div key={b._uid} className="sb-blok-wrapper" {...editableWrap(b)}>
       <BlockRenderer block={b} />
     </div>
   ))}</>

@@ -15,8 +15,10 @@ function assetUrl(asset?: StoryblokAsset | null): string | undefined {
 /** Convert Storyblok projekt story → old Project shape (used by pages + card) */
 export function storyToProject(story: Story<ProjektContent>): Project {
   const c = story.content
-  const status = (['aktywny', 'zakonczony', 'archiwalny'].includes(c.status) ? c.status : 'zakonczony') as ProjectStatus
-  const category = (['uchodzcy', 'seniorzy', 'kultura', 'edukacja', 'obywatelskie'].includes(c.kategoria) ? c.kategoria : 'kultura') as ProjectCategory
+  const rawStatus = c.status || ''
+  const status = (['aktywny', 'zakonczony', 'archiwalny'].includes(rawStatus) ? rawStatus : 'zakonczony') as ProjectStatus
+  const rawCategory = c.kategoria || ''
+  const category = (['uchodzcy', 'seniorzy', 'kultura', 'edukacja', 'obywatelskie'].includes(rawCategory) ? rawCategory : 'kultura') as ProjectCategory
 
   // Description: from Storyblok description bloks or fallback to krotki_opis
   let description: string[] = []

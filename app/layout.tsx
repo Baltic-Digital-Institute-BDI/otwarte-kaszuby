@@ -6,7 +6,6 @@ import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { StoryblokProvider } from '@/components/storyblok/storyblok-provider'
 import { BridgeLoader } from '@/components/storyblok/bridge-loader'
-import { draftMode } from 'next/headers'
 import './globals.css'
 
 const sourceSerif = Source_Serif_4({
@@ -56,9 +55,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.webmanifest',
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const dm = await draftMode()
-  const isDraft = dm.isEnabled
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pl-PL" className={`${sourceSerif.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body>
@@ -69,7 +66,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <main id="main">{children}</main>
           <Footer />
         </StoryblokProvider>
-        {isDraft && <BridgeLoader />}
+        <BridgeLoader />
         {FEATURES.analytics && process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
           <script
             defer

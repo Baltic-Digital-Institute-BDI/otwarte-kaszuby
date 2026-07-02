@@ -9,6 +9,8 @@ export const metadata = {
   description: 'Skontaktuj się ze Stowarzyszeniem Otwarte Kaszuby. Adres siedziby w Kartuzach, telefony do biura i CWU, adres email.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function KontaktPage() {
   const [story, dynamic] = await Promise.all([
     getStory<StronaContent>('kontakt'),

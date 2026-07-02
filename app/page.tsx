@@ -11,6 +11,9 @@ export const metadata = {
   description: 'Łączymy ludzi, kultury i społeczności na Kaszubach. Stowarzyszenie OPP działa od 2018 roku.',
 }
 
+// Force dynamic rendering · draft mode cookie needs runtime check
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const [story, dynamic] = await Promise.all([
     getStory<StronaContent>('home'),

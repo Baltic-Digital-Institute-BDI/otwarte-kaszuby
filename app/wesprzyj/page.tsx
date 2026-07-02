@@ -10,6 +10,8 @@ export const metadata = {
   description: 'Przekaż 1% PIT, dokonaj darowizny lub wesprzyj rzeczowo Stowarzyszenie Otwarte Kaszuby. KRS 0000718370. Status OPP.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function WesprzyjPage() {
   const [story, dynamic] = await Promise.all([
     getStory<StronaContent>('wesprzyj'),

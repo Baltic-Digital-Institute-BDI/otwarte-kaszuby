@@ -9,6 +9,8 @@ export const metadata = {
   description: 'Stowarzyszenie Otwarte Kaszuby od 2018 roku łączy ludzi, kultury i społeczności na Kaszubach. Status OPP. Misja, wartości, zarząd, historia.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function ONasPage() {
   const [story, dynamic] = await Promise.all([
     getStory<StronaContent>('o-nas'),

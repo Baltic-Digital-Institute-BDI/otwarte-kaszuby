@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, ExternalLink, Quote, MapPin, Phone, Mail, Facebook, Instagram } from 'lucide-react'
+import { storyblokEditable } from '@storyblok/react'
 import { cn } from '@/lib/utils'
 import type { StoryblokAsset, RichText, RichTextNode, ProjektContent, AktualnoscContent, CzlonekZarzaduContent } from '@/lib/storyblok/types'
 import { StatsCounter } from '@/components/sok/stats-counter'
@@ -38,18 +39,9 @@ function linkUrl(link: any): string {
   return link.cached_url || link.url || (link.story?.full_slug ? `/${link.story.full_slug}` : '#')
 }
 
-/** Official Storyblok editable data attrs · matches @storyblok/js format */
+/** Official Storyblok editable · reads blok._editable field (present only when draft mode) */
 function editable(blok: any) {
-  if (!blok?._uid) return {}
-  return {
-    'data-blok-c': JSON.stringify({
-      name: blok.component,
-      space: '293294109226994',
-      uid: blok._uid,
-      id: blok._uid,
-    }),
-    'data-blok-uid': `293294109226994-${blok._uid}`,
-  } as Record<string, string>
+  return storyblokEditable(blok) as Record<string, string>
 }
 
 // ============= RICH TEXT =============

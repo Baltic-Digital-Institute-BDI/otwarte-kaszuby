@@ -38,22 +38,17 @@ export function FaniManiLogo({ className }: { className?: string }) {
 }
 
 /**
- * Patronite logo · red circle with white "P" + wordmark
+ * Patronite logo · official brand logo hosted from /public/logos/patronite.svg
+ * (znak słowno-graficzny Patronite chroniony przez UP RP nr R.322414 · Crowd8 sp. z o.o.)
+ * Downloaded from cdn.patronite.pl for offline embedding
  */
 export function PatroniteLogo({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-label="Patronite">
-      {/* Circle */}
-      <circle cx="22" cy="25" r="20" fill="#FF424D" />
-      {/* Clean white letter P inside the circle */}
-      <path
-        fill="#FFFFFF"
-        d="M16 14h9.2c2.1 0 3.7.5 4.8 1.5 1.1 1 1.6 2.4 1.6 4.2 0 1.8-.5 3.2-1.6 4.2-1.1 1-2.7 1.5-4.8 1.5H20v6.6h-4V14Zm9 8.1c1 0 1.7-.2 2.2-.6.5-.4.7-1 .7-1.8s-.2-1.4-.7-1.8c-.5-.4-1.2-.6-2.2-.6H20v4.8h5Z"
-      />
-      {/* Wordmark */}
-      <text x="52" y="34" fontFamily="Arial, sans-serif" fontSize="24" fontWeight="700" fill="#2D2D2D">
-        patronite
-      </text>
-    </svg>
+    <img
+      src="/otwartekaszuby/logos/patronite.svg"
+      alt="Patronite"
+      className={className}
+      loading="lazy"
+    />
   )
 }

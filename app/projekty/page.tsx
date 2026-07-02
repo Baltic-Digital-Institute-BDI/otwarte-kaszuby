@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { AnimatedSection } from '@/components/sok/animated-section'
 import Link from 'next/link'
-import { PROJEKTY } from '@/lib/data/projekty'
+import { getStories } from '@/lib/storyblok/client'
+import type { ProjektContent } from '@/lib/storyblok/types'
+import { storyToProject } from '@/lib/storyblok/adapters'
 import { ProjectCard } from '@/components/sok/project-card'
 
 export const metadata: Metadata = {
@@ -9,7 +11,17 @@ export const metadata: Metadata = {
   description: 'Aktywne i zakończone projekty Stowarzyszenia Otwarte Kaszuby — Centrum Wsparcia Uchodźców, Sklep Społeczny, programy senioralne i kulturalne.',
 }
 
-export default function Projekty() {
+export const dynamic = 'force-dynamic'
+
+export default async function Projekty() {
+  const { stories } = await getStories<ProjektContent>({
+    startsWith: 'projekty/',
+    contentType: 'projekt',
+    perPage: 100,
+    sortBy: 'content.data_startu:desc',
+  })
+  const projekty = stories.map(storyToProject)
+
   return (
     <article>
       <section className="relative bg-[var(--color-ok-bg-secondary)] py-16 lg:py-20 overflow-hidden">
@@ -30,7 +42,7 @@ export default function Projekty() {
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {PROJEKTY.map((p, idx) => (
+          {projekty.map((p, idx) => (
             <AnimatedSection key={p.slug} animation="fade-up" delay={idx * 80}>
               <ProjectCard project={p} />
             </AnimatedSection>

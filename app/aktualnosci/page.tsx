@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { AnimatedSection } from '@/components/sok/animated-section'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { AKTUALNOSCI } from '@/lib/data/aktualnosci'
+import { getStories } from '@/lib/storyblok/client'
+import type { AktualnoscContent } from '@/lib/storyblok/types'
+import { storyToNews } from '@/lib/storyblok/adapters'
 import { formatDate } from '@/lib/utils'
 
 export const metadata: Metadata = {
@@ -10,7 +11,17 @@ export const metadata: Metadata = {
   description: 'Najnowsze informacje o działaniach Stowarzyszenia Otwarte Kaszuby — projekty, wydarzenia, programy społeczne na Pomorzu.',
 }
 
-export default function Aktualnosci() {
+export const dynamic = 'force-dynamic'
+
+export default async function Aktualnosci() {
+  const { stories } = await getStories<AktualnoscContent>({
+    startsWith: 'aktualnosci/',
+    contentType: 'aktualnosc',
+    perPage: 100,
+    sortBy: 'content.data_publikacji:desc',
+  })
+  const aktualnosci = stories.map(storyToNews)
+
   return (
     <article>
       <section className="bg-[var(--color-ok-bg-secondary)] py-16 lg:py-20">
@@ -29,7 +40,7 @@ export default function Aktualnosci() {
 
       <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16">
         <div className="space-y-8">
-          {AKTUALNOSCI.map((n) => (
+          {aktualnosci.map((n) => (
             <Link
               key={n.slug}
               href={`/aktualnosci/${n.slug}`}

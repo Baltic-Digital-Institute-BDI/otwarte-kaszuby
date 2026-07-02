@@ -3,21 +3,22 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Phone, Mail, ExternalLink } from 'lucide-react'
-import { PROJEKTY, getProjectBySlug } from '@/lib/data/projekty'
+import { getStory, getStories } from '@/lib/storyblok/client'
+import type { ProjektContent } from '@/lib/storyblok/types'
+import { storyToProject } from '@/lib/storyblok/adapters'
 import { StatsCounter } from '@/components/sok/stats-counter'
 import { ProjectTimeline } from '@/components/sok/timeline-event'
 import { KaszubskiDivider } from '@/components/sok/kaszubski-divider'
 import { ProjectCard } from '@/components/sok/project-card'
 
-export function generateStaticParams() {
-  return PROJEKTY.map((p) => ({ slug: p.slug }))
-}
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const project = getProjectBySlug(slug)
-  if (!project) return {}
-  return { title: project.title, description: project.shortDescription }
+  const story = await getStory<ProjektContent>(`projekty/${slug}`)
+  if (!story) return {}
+  const p = storyToProject(story)
+  return { title: p.title, description: p.shortDescription }
 }
 
 const STATUS_LABEL: Record<string, string> = {
@@ -28,10 +29,18 @@ const STATUS_LABEL: Record<string, string> = {
 
 export default async function ProjektDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const project = getProjectBySlug(slug)
-  if (!project) notFound()
+  const story = await getStory<ProjektContent>(`projekty/${slug}`)
+  if (!story) notFound()
+  const project = storyToProject(story)
 
-  const related = PROJEKTY.filter((p) => p.slug !== project.slug && p.status === 'aktywny').slice(0, 3)
+  const { stories: allStories } = await getStories<ProjektContent>({
+    startsWith: 'projekty/', contentType: 'projekt', perPage: 100,
+    sortBy: 'content.data_startu:desc',
+  })
+  const related = allStories
+    .map(storyToProject)
+    .filter((p) => p.slug !== project.slug && p.status === 'aktywny')
+    .slice(0, 3)
 
   return (
     <article>

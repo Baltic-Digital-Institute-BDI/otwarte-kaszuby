@@ -1,28 +1,34 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { AKTUALNOSCI, getNewsBySlug, getRecentNews } from '@/lib/data/aktualnosci'
+import { getStory, getStories } from '@/lib/storyblok/client'
+import type { AktualnoscContent } from '@/lib/storyblok/types'
+import { storyToNews } from '@/lib/storyblok/adapters'
 import { articleSchema } from '@/lib/seo/schema'
 import { SITE } from '@/lib/constants'
 import { formatDate } from '@/lib/utils'
 
-export function generateStaticParams() {
-  return AKTUALNOSCI.map((n) => ({ slug: n.slug }))
-}
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const news = getNewsBySlug(slug)
-  if (!news) return {}
-  return { title: news.title, description: news.excerpt }
+  const story = await getStory<AktualnoscContent>(`aktualnosci/${slug}`)
+  if (!story) return {}
+  const n = storyToNews(story)
+  return { title: n.title, description: n.excerpt }
 }
 
 export default async function AktualnoscDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const news = getNewsBySlug(slug)
-  if (!news) notFound()
+  const story = await getStory<AktualnoscContent>(`aktualnosci/${slug}`)
+  if (!story) notFound()
+  const news = storyToNews(story)
 
-  const related = getRecentNews(4).filter((n) => n.slug !== news.slug).slice(0, 3)
+  const { stories: allStories } = await getStories<AktualnoscContent>({
+    startsWith: 'aktualnosci/', contentType: 'aktualnosc',
+    perPage: 4, sortBy: 'content.data_publikacji:desc',
+  })
+  const related = allStories.map(storyToNews).filter((n) => n.slug !== news.slug).slice(0, 3)
 
   return (
     <article>

@@ -5,6 +5,8 @@ import { ngoSchema } from '@/lib/seo/schema'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { StoryblokProvider } from '@/components/storyblok/storyblok-provider'
+import { BridgeLoader } from '@/components/storyblok/bridge-loader'
+import { draftMode } from 'next/headers'
 import './globals.css'
 
 const sourceSerif = Source_Serif_4({
@@ -54,7 +56,9 @@ export const metadata: Metadata = {
   manifest: '/manifest.webmanifest',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const dm = await draftMode()
+  const isDraft = dm.isEnabled
   return (
     <html lang="pl-PL" className={`${sourceSerif.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body>
@@ -65,6 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main id="main">{children}</main>
           <Footer />
         </StoryblokProvider>
+        {isDraft && <BridgeLoader />}
         {FEATURES.analytics && process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
           <script
             defer

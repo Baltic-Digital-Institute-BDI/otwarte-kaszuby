@@ -5,11 +5,12 @@ import { Copy, Check } from 'lucide-react'
 import { SOK } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
-export function KrsClickToCopy({ variant = 'light' }: { variant?: 'light' | 'dark' }) {
+export function KrsClickToCopy({ variant = 'light', krs }: { variant?: 'light' | 'dark'; krs?: string }) {
   const [copied, setCopied] = useState(false)
+  const krsValue = krs || SOK.krs
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(SOK.krs)
+      await navigator.clipboard.writeText(krsValue)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
@@ -33,7 +34,7 @@ export function KrsClickToCopy({ variant = 'light' }: { variant?: 'light' | 'dar
           KRS
         </span>
         <span className={cn('font-mono text-base lg:text-lg font-semibold', variant === 'dark' ? 'text-white' : 'text-[var(--color-ok-text-primary)]')}>
-          {SOK.krs}
+          {krsValue}
         </span>
       </span>
       <span className={cn('shrink-0', variant === 'dark' ? 'text-[var(--color-ok-gold-soft)]' : 'text-[var(--color-ok-primary)]')}>

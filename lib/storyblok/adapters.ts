@@ -14,7 +14,7 @@ function assetUrl(asset?: StoryblokAsset | null): string | undefined {
 
 /** Convert Storyblok projekt story → old Project shape (used by pages + card) */
 export function storyToProject(story: Story<ProjektContent>): Project {
-  const c = story.content
+  const c = story.content as any
   const rawStatus = c.status || ''
   const status = (['aktywny', 'zakonczony', 'archiwalny'].includes(rawStatus) ? rawStatus : 'zakonczony') as ProjectStatus
   const rawCategory = c.kategoria || ''
@@ -75,7 +75,7 @@ export function storyToProject(story: Story<ProjektContent>): Project {
 
 /** Convert Storyblok aktualnosc story → old News shape */
 export function storyToNews(story: Story<AktualnoscContent>): News {
-  const c = story.content
+  const c = story.content as any
   // Body from rich text
   let body: string[] = []
   if (c.tresc?.content) {

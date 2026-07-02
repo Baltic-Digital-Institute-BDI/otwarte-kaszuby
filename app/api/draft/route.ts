@@ -10,10 +10,14 @@ const SECRET = process.env.STORYBLOK_PREVIEW_SECRET || 'sok-preview-2026'
  */
 const BASE_PATH = '/otwartekaszuby'
 
+// Force this route to be dynamic (no ISR cache — always fresh redirect)
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url)
-  const secret = searchParams.get('secret')
-  const slug = searchParams.get('slug') || ''
+  const url = new URL(request.url)
+  const secret = url.searchParams.get('secret')
+  const slug = url.searchParams.get('slug') || ''
 
   if (secret !== SECRET) {
     return NextResponse.json({ error: 'Invalid secret' }, { status: 401 })
@@ -24,8 +28,12 @@ export async function GET(request: Request) {
 
   // Normalize · 'home' → BASE_PATH/, else BASE_PATH/<slug>
   const normalizedSlug = slug === 'home' || slug === '' || slug === '/' ? '' : slug.replace(/^\//, '')
-  const targetPath = normalizedSlug ? `${BASE_PATH}/${normalizedSlug}` : `${BASE_PATH}/`
-  return NextResponse.redirect(new URL(targetPath, origin))
+  const targetPathname = normalizedSlug ? `${BASE_PATH}/${normalizedSlug}` : `${BASE_PATH}/`
+
+  // Build target by mutating url object (preserves origin, drops query)
+  url.pathname = targetPathname
+  url.search = ''
+  return NextResponse.redirect(url.toString())
 }
 
 export async function POST(request: Request) {

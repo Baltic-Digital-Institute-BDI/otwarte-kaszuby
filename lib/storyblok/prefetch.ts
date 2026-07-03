@@ -7,18 +7,18 @@ import type { DynamicStories } from '@/components/storyblok/blocks-client'
  * Prefetch all dynamic story lists needed by BlocksClientRenderer on server side.
  * Called from server pages · pass result as prop to LivePreview client wrapper.
  */
-export async function prefetchDynamicStories(): Promise<DynamicStories> {
+export async function prefetchDynamicStories(opts?: { projektyLimit?: number; aktualnosciLimit?: number }): Promise<DynamicStories> {
   const [projekty, aktualnosci, zarzad, komisja] = await Promise.all([
     getStories<ProjektContent>({
       startsWith: 'projekty/',
       contentType: 'projekt',
-      perPage: 12,
+      perPage: opts?.projektyLimit ?? 12,
       sortBy: 'content.data_startu:desc',
     }),
     getStories<AktualnoscContent>({
       startsWith: 'aktualnosci/',
       contentType: 'aktualnosc',
-      perPage: 12,
+      perPage: opts?.aktualnosciLimit ?? 12,
       sortBy: 'content.data_publikacji:desc',
     }),
     getStories<CzlonekZarzaduContent>({

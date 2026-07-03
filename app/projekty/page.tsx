@@ -1,54 +1,34 @@
+// /projekty · client-side Storyblok live preview z Ola-edytowalną hero + lista projektów
 import type { Metadata } from 'next'
-import { AnimatedSection } from '@/components/sok/animated-section'
-import Link from 'next/link'
-import { getStories } from '@/lib/storyblok/client'
-import type { ProjektContent } from '@/lib/storyblok/types'
-import { storyToProject } from '@/lib/storyblok/adapters'
-import { ProjectCard } from '@/components/sok/project-card'
-
-export const metadata: Metadata = {
-  title: 'Projekty',
-  description: 'Aktywne i zakończone projekty Stowarzyszenia Otwarte Kaszuby — Centrum Wsparcia Uchodźców, Sklep Społeczny, programy senioralne i kulturalne.',
-}
+import { getStory } from '@/lib/storyblok/client'
+import type { StronaContent } from '@/lib/storyblok/types'
+import { prefetchDynamicStories } from '@/lib/storyblok/prefetch'
+import { LivePreview } from '@/components/storyblok/live-preview'
 
 export const dynamic = 'force-dynamic'
 
+export async function generateMetadata(): Promise<Metadata> {
+  const story = await getStory<StronaContent>('projekty-listing')
+  const c = story?.content
+  return {
+    title: c?.tytul_seo || 'Projekty',
+    description: c?.opis_seo || 'Projekty Stowarzyszenia Otwarte Kaszuby.',
+  }
+}
+
 export default async function Projekty() {
-  const { stories } = await getStories<ProjektContent>({
-    startsWith: 'projekty/',
-    contentType: 'projekt',
-    perPage: 100,
-    sortBy: 'content.data_startu:desc',
-  })
-  const projekty = stories.map(storyToProject)
-
-  return (
-    <article>
-      <section className="relative bg-[var(--color-ok-bg-secondary)] py-16 lg:py-20 overflow-hidden">
-        <span aria-hidden="true" className="blob-1 -top-20 -right-32 w-[500px] h-[500px] bg-[var(--color-ok-primary)]" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav aria-label="breadcrumb" className="text-sm text-[var(--color-ok-text-secondary)] mb-4 animate-fade-in-up">
-            <Link href="/" className="link-underline hover:text-[var(--color-ok-primary)]">Strona główna</Link>
-            <span aria-hidden="true" className="mx-2">›</span>
-            <span aria-current="page">Projekty</span>
-          </nav>
-          <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-fade-in-up" style={{ animationDelay: '100ms' }}>Nasze projekty</h1>
-          <p className="text-lg text-[var(--color-ok-text-secondary)] max-w-3xl leading-relaxed animate-fade-in-up" style={{ animationDelay: '250ms' }}>
-            Programy wspierające uchodźców, seniorów, młodzież oraz pielęgnujące kulturę kaszubską.
-            Działamy lokalnie, myślimy globalnie.
-          </p>
-        </div>
+  const [story, dynamicStories] = await Promise.all([
+    getStory<StronaContent>('projekty-listing'),
+    prefetchDynamicStories({ projektyLimit: 100 }),
+  ])
+  if (!story?.content?.sekcje?.length) {
+    // Fallback: gdy Ola przypadkiem usunie storię — pokaż minimalny placeholder
+    return (
+      <section className="mx-auto max-w-7xl px-4 py-16 text-center">
+        <h1 className="font-headline text-4xl font-bold mb-4">Projekty</h1>
+        <p className="text-[var(--color-ok-text-secondary)]">Brak treści w Storyblok. Skontaktuj się z administratorem.</p>
       </section>
-
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {projekty.map((p, idx) => (
-            <AnimatedSection key={p.slug} animation="fade-up" delay={idx * 80}>
-              <ProjectCard project={p} />
-            </AnimatedSection>
-          ))}
-        </div>
-      </section>
-    </article>
-  )
+    )
+  }
+  return <LivePreview initialStory={story as any} dynamic={dynamicStories} />
 }

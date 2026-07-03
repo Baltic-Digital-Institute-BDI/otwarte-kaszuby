@@ -49,3 +49,6 @@ dev3001_*.log
 install_*.log
 
 .vercel
+
+# Backup folder used only for otwartekaszuby-pl-full-backup branch
+otwartekaszuby-pl-backup/

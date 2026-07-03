@@ -14,6 +14,19 @@ const BASE_PATH = '/otwartekaszuby'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
+/**
+ * Slug → real path mapping.
+ * Storyblok wysyła nam Story `full_slug` (np. "projekty-listing") ale
+ * ta storia jest wyświetlana na innej ścieżce w Next.js. Ta mapa nadpisuje.
+ */
+const SLUG_TO_PATH: Record<string, string> = {
+  'projekty-listing': 'projekty',
+  'aktualnosci-listing': 'aktualnosci',
+  '_globals/footer': '',       // footer → home page (footer widoczny na każdej stronie)
+  'utility-404': 'utility-404-preview',
+  'utility-500': 'utility-500-preview',
+}
+
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const secret = url.searchParams.get('secret')
@@ -26,8 +39,13 @@ export async function GET(request: Request) {
   const draft = await draftMode()
   draft.enable()
 
-  // Normalize · 'home' → BASE_PATH/, else BASE_PATH/<slug>
-  const normalizedSlug = slug === 'home' || slug === '' || slug === '/' ? '' : slug.replace(/^\//, '')
+  // 1) Sprawdz mapowanie · 2) fallback do slug bez zmian
+  const cleanSlug = slug.replace(/^\//, '')
+  const mappedPath = SLUG_TO_PATH[cleanSlug]
+  const normalizedSlug = mappedPath !== undefined
+    ? mappedPath
+    : (cleanSlug === 'home' || cleanSlug === '' ? '' : cleanSlug)
+
   const targetPathname = normalizedSlug ? `${BASE_PATH}/${normalizedSlug}` : `${BASE_PATH}/`
 
   // Build target by mutating url object (preserves origin, drops query)

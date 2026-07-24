@@ -125,9 +125,18 @@ export type AnyBlok =
 export interface DofinansowanieUeBlok {
   _uid: string
   component: 'dofinansowanie_ue_blok'
-  tekst: string
+  tekst?: string
   znaki?: StoryblokAsset
   znaki_alt?: string
+  tytul_projektu?: string
+  program?: string
+  cel?: string
+  szkolenia?: string
+  wartosc_calkowita?: string
+  dofinansowanie?: string
+  srodki_europejskie?: string
+  wspolfinansowanie_bp?: string
+  formula?: string
 }
 
 // ===== Root content types =====

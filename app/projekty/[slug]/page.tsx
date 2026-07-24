@@ -99,11 +99,7 @@ export default async function ProjektDetail({ params }: { params: Promise<{ slug
       )}
 
       {project.dofinansowanieUe && (
-        <DofinansowanieUe
-          tekst={project.dofinansowanieUe.tekst}
-          znakiUrl={project.dofinansowanieUe.znakiUrl}
-          znakiAlt={project.dofinansowanieUe.znakiAlt}
-        />
+        <DofinansowanieUe {...project.dofinansowanieUe} />
       )}
 
       {project.stats && project.stats.length > 0 && (

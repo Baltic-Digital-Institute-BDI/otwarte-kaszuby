@@ -122,6 +122,14 @@ export type AnyBlok =
   | PartnerzyBlok | DonateCTABlok | DividerKaszubski | ListaProjektow
   | ListaAktualnosci | ListaZarzadu
 
+export interface DofinansowanieUeBlok {
+  _uid: string
+  component: 'dofinansowanie_ue_blok'
+  tekst: string
+  znaki?: StoryblokAsset
+  znaki_alt?: string
+}
+
 // ===== Root content types =====
 export interface StronaContent {
   component: 'strona'
@@ -144,6 +152,7 @@ export interface ProjektContent {
   partnerzy_tekst?: RichText
   finansowanie_tekst?: RichText
   kontakt_tel?: string
+  dofinansowanie_ue?: DofinansowanieUeBlok[]
 }
 
 export interface AktualnoscContent {

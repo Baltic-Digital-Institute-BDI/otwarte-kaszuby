@@ -50,6 +50,11 @@ export function storyToProject(story: Story<ProjektContent>): Project {
     shortDescription: c.krotki_opis || '',
     description,
     heroImage: assetUrl(c.zdjecie_hero),
+    dofinansowanieUe: (Array.isArray(c.dofinansowanie_ue) && c.dofinansowanie_ue[0]) ? {
+      tekst: c.dofinansowanie_ue[0].tekst || '',
+      znakiUrl: assetUrl(c.dofinansowanie_ue[0].znaki),
+      znakiAlt: c.dofinansowanie_ue[0].znaki_alt || c.dofinansowanie_ue[0].znaki?.alt || 'Zestaw znaków Fundusze Europejskie, Rzeczpospolita Polska, Unia Europejska',
+    } : undefined,
     stats: Array.isArray(c.stats) ? c.stats.map((s: any) => ({
       value: parseInt(s.wartosc || s.value, 10) || 0,
       suffix: s.suffix || '',

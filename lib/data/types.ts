@@ -42,6 +42,7 @@ export interface Project {
   contact?: ProjectContact
   externalLinks?: { label: string; url: string }[]
   heroImage?: string
+  dofinansowanieUe?: { tekst: string; znakiUrl?: string; znakiAlt?: string }
 }
 
 export interface News {

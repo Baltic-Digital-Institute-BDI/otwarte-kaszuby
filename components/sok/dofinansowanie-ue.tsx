@@ -8,8 +8,9 @@ interface Props {
 
 /**
  * Obowiązkowe oznakowanie projektu unijnego (FE 2021-2027).
- * Treść wyświetlana SŁOWO W SŁOWO z pola `tekst` (Storyblok, edytowalne przez
- * właściciela treści). Znaki w wersji pełnokolorowej — wymóg dla stron www.
+ * Treść wyświetlana SŁOWO W SŁOWO z pola `tekst` (Storyblok, edytowalne).
+ * Akapity rozdzielone pustą linią; łamania linii wewnątrz akapitu zachowane.
+ * Znaki w wersji pełnokolorowej — wymóg dla stron www.
  */
 export function DofinansowanieUe({ znakiUrl, znakiAlt, tekst }: Props) {
   const paragraphs = (tekst || '').split(/\n{2,}/).map((t) => t.trim()).filter(Boolean)
@@ -36,7 +37,9 @@ export function DofinansowanieUe({ znakiUrl, znakiAlt, tekst }: Props) {
           )}
           <div className="space-y-4 text-base lg:text-lg leading-relaxed text-[var(--color-ok-text-primary)]">
             {paragraphs.map((para, i) => (
-              <p key={i}>{para}</p>
+              <p key={i} className="whitespace-pre-line">
+                {para}
+              </p>
             ))}
           </div>
         </div>

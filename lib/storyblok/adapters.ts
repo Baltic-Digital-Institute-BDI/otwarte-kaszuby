@@ -50,6 +50,24 @@ export function storyToProject(story: Story<ProjektContent>): Project {
     shortDescription: c.krotki_opis || '',
     description,
     heroImage: assetUrl(c.zdjecie_hero),
+    dofinansowanieUe: (() => {
+      const d = Array.isArray(c.dofinansowanie_ue) ? c.dofinansowanie_ue[0] : undefined
+      if (!d) return undefined
+      return {
+        tekst: d.tekst || '',
+        znakiUrl: assetUrl(d.znaki),
+        znakiAlt: d.znaki_alt || d.znaki?.alt || 'Zestaw znaków Fundusze Europejskie, Rzeczpospolita Polska, Unia Europejska',
+        tytulProjektu: d.tytul_projektu || '',
+        program: d.program || '',
+        cel: d.cel || '',
+        szkolenia: String(d.szkolenia || '').split('\n').map((x: string) => x.trim()).filter(Boolean),
+        wartoscCalkowita: d.wartosc_calkowita || '',
+        dofinansowanie: d.dofinansowanie || '',
+        srodkiEuropejskie: d.srodki_europejskie || '',
+        wspolfinansowanieBp: d.wspolfinansowanie_bp || '',
+        formula: d.formula || '',
+      }
+    })(),
     stats: Array.isArray(c.stats) ? c.stats.map((s: any) => ({
       value: parseInt(s.wartosc || s.value, 10) || 0,
       suffix: s.suffix || '',

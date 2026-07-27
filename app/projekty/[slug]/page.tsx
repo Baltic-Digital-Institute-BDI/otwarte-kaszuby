@@ -10,6 +10,7 @@ import { StatsCounter } from '@/components/sok/stats-counter'
 import { ProjectTimeline } from '@/components/sok/timeline-event'
 import { KaszubskiDivider } from '@/components/sok/kaszubski-divider'
 import { ProjectCard } from '@/components/sok/project-card'
+import { DofinansowanieUe } from '@/components/sok/dofinansowanie-ue'
 
 export const dynamic = 'force-dynamic'
 
@@ -95,6 +96,10 @@ export default async function ProjektDetail({ params }: { params: Promise<{ slug
             </p>
           </div>
         </section>
+      )}
+
+      {project.dofinansowanieUe && (
+        <DofinansowanieUe {...project.dofinansowanieUe} />
       )}
 
       {project.stats && project.stats.length > 0 && (

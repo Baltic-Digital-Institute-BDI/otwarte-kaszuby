@@ -42,6 +42,20 @@ export interface Project {
   contact?: ProjectContact
   externalLinks?: { label: string; url: string }[]
   heroImage?: string
+  dofinansowanieUe?: {
+    tekst?: string
+    znakiUrl?: string
+    znakiAlt?: string
+    tytulProjektu?: string
+    program?: string
+    cel?: string
+    szkolenia?: string[]
+    wartoscCalkowita?: string
+    dofinansowanie?: string
+    srodkiEuropejskie?: string
+    wspolfinansowanieBp?: string
+    formula?: string
+  }
 }
 
 export interface News {

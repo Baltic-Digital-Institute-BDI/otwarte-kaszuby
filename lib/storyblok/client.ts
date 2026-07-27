@@ -36,13 +36,14 @@ interface FetchOptions {
 }
 
 const isDev = process.env.NODE_ENV === 'development'
+const isPreview = process.env.VERCEL_ENV === 'preview'
 
 /** Fetch single story */
 export async function getStory<T = unknown>(slug: string, opts: FetchOptions = {}): Promise<Story<T> | null> {
   const isDraft = await isDraftMode()
   const params = new URLSearchParams({
     token: TOKEN,
-    version: opts.version || (isDraft || isDev ? 'draft' : 'published'),
+    version: opts.version || (isDraft || isDev || isPreview ? 'draft' : 'published'),
     cv: String(Date.now()),
   })
   if (opts.resolveLinks) params.set('resolve_links', opts.resolveLinks)
@@ -74,7 +75,7 @@ export async function getStories<T = unknown>(opts: FetchOptions & {
 } = {}): Promise<{ stories: Story<T>[]; total: number }> {
   const params = new URLSearchParams({
     token: TOKEN,
-    version: opts.version || (isDev ? 'draft' : 'published'),
+    version: opts.version || (isDev || isPreview ? 'draft' : 'published'),
     per_page: String(opts.perPage || 25),
     page: String(opts.page || 1),
   })

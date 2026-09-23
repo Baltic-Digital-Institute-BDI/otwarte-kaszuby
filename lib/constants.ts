@@ -54,7 +54,19 @@ export const SITE = {
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://otwartekaszuby.pl',
   defaultDescription:
     'Łączymy ludzi, kultury i społeczności na Kaszubach. Stowarzyszenie OPP działa od 2018 roku.',
+  // Podglad w mediach spolecznosciowych: PNG (D-WWW-004 regula 3), 1200x630 = wymiar pliku zrodlowego og-default.svg
   ogImage: '/og-default.png',
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
+} as const
+
+/** Wspolny obrazek podgladu (og:image) — uzywany w layout i na podstronach szczegolowych */
+export const OG_IMAGE = {
+  url: SITE.ogImage,
+  width: SITE.ogImageWidth,
+  height: SITE.ogImageHeight,
+  alt: SITE.name,
+  type: 'image/png',
 } as const
 
 // Feature flags · ENV-gated future implementations (per Adam directive 2026-05-07)

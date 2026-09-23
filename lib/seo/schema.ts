@@ -1,15 +1,21 @@
 import { SOK, SITE } from '../constants'
 
+/** Staly identyfikator organizacji — pozwala maszynom polaczyc wszystkie opisy w jeden podmiot */
+export const NGO_ID = `${SITE.url}/#organizacja`
+
 export function ngoSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'NGO',
+    '@id': NGO_ID,
     name: SOK.legalName,
     alternateName: SOK.shortName,
     url: SITE.url,
     logo: `${SITE.url}/logo.svg`,
     description: SOK.shortMission,
     foundingDate: SOK.registeredAt,
+    email: SOK.contact.email,
+    telephone: SOK.contact.phoneE164,
     address: {
       '@type': 'PostalAddress',
       streetAddress: SOK.address.street,

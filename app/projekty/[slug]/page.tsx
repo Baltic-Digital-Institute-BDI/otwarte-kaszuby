@@ -11,6 +11,7 @@ import { ProjectTimeline } from '@/components/sok/timeline-event'
 import { KaszubskiDivider } from '@/components/sok/kaszubski-divider'
 import { ProjectCard } from '@/components/sok/project-card'
 import { DofinansowanieUe } from '@/components/sok/dofinansowanie-ue'
+import { OG_IMAGE } from '@/lib/constants'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,7 +20,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const story = await getStory<ProjektContent>(`projekty/${slug}`)
   if (!story) return {}
   const p = storyToProject(story)
-  return { title: p.title, description: p.shortDescription }
+  return {
+    title: p.title,
+    description: p.shortDescription,
+    // podglad w mediach spolecznosciowych z tytulem projektu (zamiast nazwy serwisu)
+    openGraph: { type: 'website', url: './', title: p.title, description: p.shortDescription, images: [OG_IMAGE] },
+  }
 }
 
 const STATUS_LABEL: Record<string, string> = {

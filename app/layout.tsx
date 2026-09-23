@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Source_Serif_4, Inter, JetBrains_Mono } from 'next/font/google'
-import { SITE, SOK, FEATURES } from '@/lib/constants'
+import { SITE, SOK, FEATURES, OG_IMAGE } from '@/lib/constants'
 import { ngoSchema } from '@/lib/seo/schema'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
@@ -34,15 +34,23 @@ export const metadata: Metadata = {
   creator: SOK.legalName,
   publisher: SOK.legalName,
   formatDetection: { email: false, address: false, telephone: false },
+  // Adres kanoniczny: './' = kazda podstrona wskazuje sama siebie (wzgledem metadataBase)
+  alternates: { canonical: './' },
   openGraph: {
     type: 'website',
     locale: 'pl_PL',
-    url: SITE.url,
+    url: './',
     siteName: SITE.name,
     title: SITE.name,
     description: SITE.defaultDescription,
+    images: [OG_IMAGE],
   },
-  twitter: { card: 'summary_large_image', title: SITE.name, description: SITE.defaultDescription },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE.name,
+    description: SITE.defaultDescription,
+    images: [OG_IMAGE.url],
+  },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large' } },
   icons: {
     icon: [

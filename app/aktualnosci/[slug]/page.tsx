@@ -5,7 +5,7 @@ import { getStory, getStories } from '@/lib/storyblok/client'
 import type { AktualnoscContent } from '@/lib/storyblok/types'
 import { storyToNews } from '@/lib/storyblok/adapters'
 import { articleSchema } from '@/lib/seo/schema'
-import { SITE } from '@/lib/constants'
+import { SITE, OG_IMAGE } from '@/lib/constants'
 import { formatDate } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
@@ -15,7 +15,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const story = await getStory<AktualnoscContent>(`aktualnosci/${slug}`)
   if (!story) return {}
   const n = storyToNews(story)
-  return { title: n.title, description: n.excerpt }
+  return {
+    title: n.title,
+    description: n.excerpt,
+    // podglad w mediach spolecznosciowych z tytulem aktualnosci (zamiast nazwy serwisu)
+    openGraph: {
+      type: 'article',
+      url: './',
+      title: n.title,
+      description: n.excerpt,
+      publishedTime: n.date.slice(0, 10),
+      images: [OG_IMAGE],
+    },
+  }
 }
 
 export default async function AktualnoscDetail({ params }: { params: Promise<{ slug: string }> }) {

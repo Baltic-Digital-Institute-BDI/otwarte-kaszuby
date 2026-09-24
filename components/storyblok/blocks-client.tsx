@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, ExternalLink, Quote, MapPin, Phone, Mail, Facebook, Instagram } from 'lucide-react'
+import { ArrowRight, ExternalLink, Quote, MapPin, Phone, Mail, Facebook, Instagram, Newspaper } from 'lucide-react'
 import { storyblokEditable } from '@storyblok/react'
 import { cn } from '@/lib/utils'
 import type { StoryblokAsset, RichText, RichTextNode, ProjektContent, AktualnoscContent, CzlonekZarzaduContent } from '@/lib/storyblok/types'
@@ -29,8 +29,10 @@ function assetUrl(asset?: StoryblokAsset | string | null, w = 1600): string {
   const filename = typeof asset === 'string' ? asset : asset.filename
   if (!filename) return ''
   if (filename.startsWith('/') && !filename.startsWith('//')) return filename
-  if (filename.includes('/m/')) return filename
-  return `${filename}/m/${w}x0`
+  // Storyblok zwraca czesc adresow bez protokolu (//a.storyblok.com/...) — next/image wymaga https://
+  const abs = filename.startsWith('//') ? `https:${filename}` : filename
+  if (abs.includes('/m/')) return abs
+  return `${abs}/m/${w}x0`
 }
 
 function linkUrl(link: any): string {
@@ -663,12 +665,25 @@ function ListaAktualnosciBlock({ b, aktualnosci }: { b: any; aktualnosci?: Dynam
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         {stories.map((s, i) => (
           <AnimatedSection key={s.id} animation="fade-up" delay={i * 120}>
-            <Link href={`/${s.full_slug}`} className="card-hover group flex flex-col h-full bg-white rounded-xl p-6 border border-[var(--color-ok-border-default)] hover:border-[var(--color-ok-primary)]">
-              <time className="text-xs font-mono text-[var(--color-ok-text-tertiary)] uppercase mb-2">{fmt(s.content.data_publikacji as any)}</time>
-              <span className="text-xs font-semibold text-[var(--color-ok-primary)] uppercase mb-3">{s.content.kategoria}</span>
-              <h3 className="font-headline text-xl font-semibold mb-3 group-hover:text-[var(--color-ok-primary)] transition-colors leading-tight">{s.content.tytul}</h3>
-              <p className="text-sm text-[var(--color-ok-text-secondary)] leading-relaxed flex-1">{s.content.excerpt}</p>
-              <span className="mt-4 inline-flex items-center gap-1 text-[var(--color-ok-primary)] text-sm font-medium">Czytaj więcej <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" /></span>
+            <Link href={`/${s.full_slug}`} className="card-hover group flex flex-col h-full bg-white rounded-xl overflow-hidden border border-[var(--color-ok-border-default)] hover:border-[var(--color-ok-primary)]">
+              {/* Zdjecie z pola zdjecie_hero (to samo, ktore redaktorka dodaje w Storyblok) */}
+              <div className="relative aspect-[16/10] overflow-hidden bg-[var(--color-ok-bg-tertiary)]">
+                {s.content.zdjecie_hero?.filename ? (
+                  <Image src={assetUrl(s.content.zdjecie_hero, 800)} alt={s.content.zdjecie_hero?.alt || s.content.tytul} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                ) : (
+                  // brak zdjecia: rowna siatka kart zamiast pustych, wyzszych kafelkow
+                  <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                    <Newspaper className="size-10 text-[var(--color-ok-primary)] opacity-30" />
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col flex-1 p-6">
+                <time className="text-xs font-mono text-[var(--color-ok-text-tertiary)] uppercase mb-2">{fmt(s.content.data_publikacji as any)}</time>
+                <span className="text-xs font-semibold text-[var(--color-ok-primary)] uppercase mb-3">{s.content.kategoria}</span>
+                <h3 className="font-headline text-xl font-semibold mb-3 group-hover:text-[var(--color-ok-primary)] transition-colors leading-tight">{s.content.tytul}</h3>
+                <p className="text-sm text-[var(--color-ok-text-secondary)] leading-relaxed flex-1">{s.content.excerpt}</p>
+                <span className="mt-4 inline-flex items-center gap-1 text-[var(--color-ok-primary)] text-sm font-medium">Czytaj więcej <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" /></span>
+              </div>
             </Link>
           </AnimatedSection>
         ))}

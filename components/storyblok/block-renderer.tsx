@@ -23,8 +23,9 @@ function assetUrl(asset?: StoryblokAsset | string | null, w = 1600): string {
   if (!filename) return ''
   // Local paths (Next.js public/) — return as-is, no image service transform
   if (filename.startsWith('/') && !filename.startsWith('//')) return filename
-  if (filename.includes('/m/')) return filename
-  return `${filename}/m/${w}x0`
+  const abs = filename.startsWith('//') ? `https:${filename}` : filename
+  if (abs.includes('/m/')) return abs
+  return `${abs}/m/${w}x0`
 }
 
 function isStoryblokImage(filename: string) {

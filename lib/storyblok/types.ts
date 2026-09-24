@@ -170,7 +170,10 @@ export interface AktualnoscContent {
   data_publikacji: string
   kategoria: string
   tagi?: string
+  /** Pole w schemacie Storyblok: zdjecie_hero (tak zapisuje edytor); `zdjecie` zostaje dla zgodnosci wstecz */
+  zdjecie_hero?: StoryblokAsset
   zdjecie?: StoryblokAsset
+  autor?: string
   excerpt: string
   tresc: RichText
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { getStory, getStories } from '@/lib/storyblok/client'
 import type { AktualnoscContent } from '@/lib/storyblok/types'
@@ -74,6 +75,22 @@ export default async function AktualnoscDetail({ params }: { params: Promise<{ s
           <p className="text-lg text-[var(--color-ok-text-secondary)] leading-relaxed">{news.excerpt}</p>
         </div>
       </section>
+
+      {/* Zdjecie glowne z pola zdjecie_hero w Storyblok (wczesniej pomijane) */}
+      {news.heroImage && (
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pt-10 lg:pt-12">
+          <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-[var(--color-ok-bg-tertiary)]">
+            <Image
+              src={news.heroImage.includes('/m/') ? news.heroImage : `${news.heroImage}/m/1600x0`}
+              alt={news.title}
+              fill
+              sizes="(min-width: 1024px) 896px, 100vw"
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+      )}
 
       <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="space-y-5 text-base lg:text-lg leading-relaxed text-[var(--color-ok-text-primary)]">

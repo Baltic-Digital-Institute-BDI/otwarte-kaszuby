@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, ExternalLink, Quote, MapPin, Phone, Mail, Facebook, Instagram, Newspaper } from 'lucide-react'
+import { ArrowRight, ExternalLink, Quote, MapPin, Phone, Mail, Facebook, Instagram, Newspaper, FolderOpen } from 'lucide-react'
 import { storyblokEditable } from '@storyblok/react'
 import { cn } from '@/lib/utils'
 import type { StoryblokAsset, RichText, RichTextNode, ProjektContent, AktualnoscContent, CzlonekZarzaduContent } from '@/lib/storyblok/types'
@@ -629,16 +629,20 @@ function ListaProjektowBlock({ b, projekty }: { b: any; projekty?: DynamicStorie
       </AnimatedSection>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {stories.map((s, i) => (
-          <AnimatedSection key={s.id} animation="fade-up" delay={i * 120}>
+          <AnimatedSection key={s.id} animation="fade-up" delay={(i % 3) * 80}>
             <Link href={`/${s.full_slug}`} className="card-hover group flex flex-col h-full bg-white rounded-xl overflow-hidden border border-[var(--color-ok-border-default)] hover:border-[var(--color-ok-primary)]">
-              {s.content.zdjecie_hero?.filename && (
-                <div className="relative aspect-[16/10] overflow-hidden bg-[var(--color-ok-bg-tertiary)]">
-                  <Image src={assetUrl(s.content.zdjecie_hero, 800)} alt={s.content.tytul} fill sizes="33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <span className="absolute top-3 left-3 inline-flex text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--color-ok-gold)] text-white">{s.content.status?.toUpperCase()}</span>
-                </div>
-              )}
+              {/* Zawsze ten sam obszar zdjecia (16:10) — bez zdjecia ikona zastepcza, zeby siatka sie nie rozjezdzala */}
+              <div className="relative aspect-[16/10] overflow-hidden bg-[var(--color-ok-bg-tertiary)]">
+                {s.content.zdjecie_hero?.filename ? (
+                  <Image src={assetUrl(s.content.zdjecie_hero, 800)} alt={s.content.zdjecie_hero?.alt || s.content.tytul} fill sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                    <FolderOpen className="size-10 text-[var(--color-ok-primary)] opacity-30" />
+                  </div>
+                )}
+                {s.content.status && <span className="absolute top-3 left-3 inline-flex text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--color-ok-gold)] text-white">{s.content.status.toUpperCase()}</span>}
+              </div>
               <div className="flex flex-col flex-1 p-6">
-                {!s.content.zdjecie_hero?.filename && <span className="inline-flex self-start text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--color-ok-gold)] text-white mb-4">{s.content.status?.toUpperCase()}</span>}
                 <h3 className="font-headline text-xl lg:text-2xl font-bold leading-tight mb-3 group-hover:text-[var(--color-ok-primary)] transition-colors">{s.content.tytul}</h3>
                 <p className="text-[var(--color-ok-text-secondary)] text-sm leading-relaxed flex-1">{s.content.krotki_opis}</p>
                 <span className="mt-4 inline-flex items-center gap-2 text-[var(--color-ok-primary)] font-medium text-sm">Zobacz więcej <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" /></span>
@@ -665,7 +669,7 @@ function ListaAktualnosciBlock({ b, aktualnosci }: { b: any; aktualnosci?: Dynam
       </AnimatedSection>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         {stories.map((s, i) => (
-          <AnimatedSection key={s.id} animation="fade-up" delay={i * 120}>
+          <AnimatedSection key={s.id} animation="fade-up" delay={(i % 3) * 80}>
             <Link href={`/${s.full_slug}`} className="card-hover group flex flex-col h-full bg-white rounded-xl overflow-hidden border border-[var(--color-ok-border-default)] hover:border-[var(--color-ok-primary)]">
               {/* Zdjecie glowne: pole "Zdjecie hero" z edytora (zdjecie), zapas: zdjecie_hero ze starych artykulow */}
               <div className="relative aspect-[16/10] overflow-hidden bg-[var(--color-ok-bg-tertiary)]">

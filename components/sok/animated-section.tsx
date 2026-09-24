@@ -28,36 +28,48 @@ const ANIMATION_INITIAL: Record<Animation, string> = {
   'tilt': 'opacity-0 -rotate-2 translate-y-4',
 }
 
+/** Gorny limit opoznienia — dluga lista kart nie moze czekac sekundami na pojawienie sie */
+const MAX_DELAY_MS = 240
+
+/**
+ * Stan animacji:
+ * - 'static'  — HTML z serwera i elementy widoczne od razu po zaladowaniu: tresc widoczna bez czekania na JS
+ * - 'hidden'  — element ponizej ekranu: ukryty do momentu przewiniecia
+ * - 'visible' — element wjechal w ekran: animacja wejscia
+ */
+type AnimState = 'static' | 'hidden' | 'visible'
+
 export function AnimatedSection({
   children,
   animation = 'fade-up',
   delay = 0,
-  duration = 700,
+  duration = 500,
   threshold = 0.15,
   className,
   as: Tag = 'div',
   once = true,
 }: Props) {
   const ref = useRef<HTMLElement>(null)
-  const [visible, setVisible] = useState(false)
+  const [state, setState] = useState<AnimState>('static')
 
   useEffect(() => {
     if (typeof window === 'undefined') return
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduceMotion) {
-      setVisible(true)
-      return
-    }
+    if (reduceMotion) return
     const node = ref.current
     if (!node) return
+    // Element juz na ekranie przy starcie strony: zostaje widoczny, bez animacji (szybsze pierwsze wyswietlenie)
+    const rect = node.getBoundingClientRect()
+    if (rect.top < window.innerHeight && rect.bottom > 0) return
+    setState('hidden')
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setVisible(true)
+            setState('visible')
             if (once) observer.unobserve(entry.target)
           } else if (!once) {
-            setVisible(false)
+            setState('hidden')
           }
         })
       },
@@ -72,11 +84,13 @@ export function AnimatedSection({
     <TagAny
       ref={ref as never}
       className={cn(
-        'will-change-transform transition-all ease-out',
-        visible ? 'opacity-100 translate-x-0 translate-y-0 scale-100 rotate-0' : ANIMATION_INITIAL[animation],
+        state === 'hidden'
+          ? cn('transition-none', ANIMATION_INITIAL[animation])
+          : 'opacity-100 translate-x-0 translate-y-0 scale-100 rotate-0',
+        state === 'visible' && 'will-change-transform transition-all ease-out',
         className
       )}
-      style={{ transitionDuration: `${duration}ms`, transitionDelay: `${delay}ms` }}
+      style={state === 'visible' ? { transitionDuration: `${duration}ms`, transitionDelay: `${Math.min(delay, MAX_DELAY_MS)}ms` } : undefined}
     >
       {children}
     </TagAny>

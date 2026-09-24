@@ -69,7 +69,9 @@ export async function Footer() {
   const c = story?.content ?? fallbackFromConstants()
 
   return (
-    <footer className="mt-24 bg-[var(--color-ok-primary-900)] text-[var(--color-ok-text-inverse)]">
+    // Bez marginesu gornego: odstep nad stopka daje dolny padding ostatniej sekcji strony
+    // (wczesniej mt-24 zostawial bialy pasek pod kolorowymi sekcjami, np. "Zobacz rowniez" i 404)
+    <footer className="bg-[var(--color-ok-primary-900)] text-[var(--color-ok-text-inverse)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           <div>

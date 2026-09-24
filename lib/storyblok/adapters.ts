@@ -1,5 +1,6 @@
 import type { Story } from './client'
 import type { ProjektContent, AktualnoscContent, StoryblokAsset } from './types'
+import { newsHeroAsset } from './news-hero'
 import type { Project, News, ProjectStatus, ProjectCategory } from '@/lib/data/types'
 
 const ASSET_BASE = 'https://a.storyblok.com'
@@ -116,7 +117,8 @@ export function storyToNews(story: Story<AktualnoscContent>): News {
     category: c.kategoria || 'wydarzenie',
     excerpt: c.excerpt || '',
     body,
-    heroImage: assetUrl(c.zdjecie_hero),
+    heroImage: assetUrl(newsHeroAsset(c)),
+    heroAlt: newsHeroAsset(c)?.alt || undefined,
     tags: Array.isArray(c.tags) ? c.tags : undefined,
   }
 }

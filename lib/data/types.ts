@@ -67,6 +67,8 @@ export interface News {
   body: string[]
   tags?: string[]
   heroImage?: string
+  /** Tekst alternatywny zdjecia (z pola "Tekst alternatywny" assetu w Storyblok) */
+  heroAlt?: string
 }
 
 export interface BoardMember {

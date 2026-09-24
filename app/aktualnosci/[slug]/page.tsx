@@ -76,13 +76,13 @@ export default async function AktualnoscDetail({ params }: { params: Promise<{ s
         </div>
       </section>
 
-      {/* Zdjecie glowne z pola zdjecie_hero w Storyblok (wczesniej pomijane) */}
+      {/* Zdjecie glowne ("Zdjecie hero" w Storyblok; wybor pola: lib/storyblok/news-hero.ts) */}
       {news.heroImage && (
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pt-10 lg:pt-12">
           <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-[var(--color-ok-bg-tertiary)]">
             <Image
-              src={news.heroImage.includes('/m/') ? news.heroImage : `${news.heroImage}/m/1600x0`}
-              alt={news.title}
+              src={news.heroImage.includes('a.storyblok.com') && !news.heroImage.includes('/m/') ? `${news.heroImage}/m/1600x0` : news.heroImage}
+              alt={news.heroAlt || news.title}
               fill
               sizes="(min-width: 1024px) 896px, 100vw"
               className="object-cover"

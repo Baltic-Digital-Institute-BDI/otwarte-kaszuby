@@ -6,6 +6,7 @@ import { ArrowRight, ExternalLink, Quote, MapPin, Phone, Mail, Facebook, Instagr
 import { storyblokEditable } from '@storyblok/react'
 import { cn } from '@/lib/utils'
 import type { StoryblokAsset, RichText, RichTextNode, ProjektContent, AktualnoscContent, CzlonekZarzaduContent } from '@/lib/storyblok/types'
+import { newsHeroAsset } from '@/lib/storyblok/news-hero'
 import { StatsCounter } from '@/components/sok/stats-counter'
 import { HistoryTimeline } from '@/components/sok/timeline-event'
 import { KaszubskiDivider } from '@/components/sok/kaszubski-divider'
@@ -666,10 +667,10 @@ function ListaAktualnosciBlock({ b, aktualnosci }: { b: any; aktualnosci?: Dynam
         {stories.map((s, i) => (
           <AnimatedSection key={s.id} animation="fade-up" delay={i * 120}>
             <Link href={`/${s.full_slug}`} className="card-hover group flex flex-col h-full bg-white rounded-xl overflow-hidden border border-[var(--color-ok-border-default)] hover:border-[var(--color-ok-primary)]">
-              {/* Zdjecie z pola zdjecie_hero (to samo, ktore redaktorka dodaje w Storyblok) */}
+              {/* Zdjecie glowne: pole "Zdjecie hero" z edytora (zdjecie), zapas: zdjecie_hero ze starych artykulow */}
               <div className="relative aspect-[16/10] overflow-hidden bg-[var(--color-ok-bg-tertiary)]">
-                {s.content.zdjecie_hero?.filename ? (
-                  <Image src={assetUrl(s.content.zdjecie_hero, 800)} alt={s.content.zdjecie_hero?.alt || s.content.tytul} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                {newsHeroAsset(s.content) ? (
+                  <Image src={assetUrl(newsHeroAsset(s.content), 800)} alt={newsHeroAsset(s.content)?.alt || s.content.tytul} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                   // brak zdjecia: rowna siatka kart zamiast pustych, wyzszych kafelkow
                   <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
